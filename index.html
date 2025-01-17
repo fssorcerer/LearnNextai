@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnNext - AI-Powered PDF Summarizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 48px;
+            font-weight: bold;
+        }
+        
+        .premium-button {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .premium-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.3);
+            background: linear-gradient(135deg, #4338ca, #6d28d9);
+        }
+
+        .premium-button:active:not(:disabled) {
+            transform: translateY(0px);
+        }
+
+        .premium-button:disabled {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .feature-card {
+            background: rgba(124, 58, 237, 0.05);
+            border: 1px solid rgba(124, 58, 237, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .feature-card:hover {
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            backdrop-filter: blur(10px);
+        }
+         /* Add new styles */
+         .progress-bar {
+            width: 100%;
+            height: 4px;
+            background-color: rgba(124, 58, 237, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .selected-file {
+            margin-top: 8px;
+            padding: 8px 16px;
+            background: rgba(124, 58, 237, 0.1);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .selected-file-name {
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .footer {
+            background: rgba(124, 58, 237, 0.05);
+            border-top: 1px solid rgba(124, 58, 237, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-status {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-style: italic;
+            color: var(--base-content);
+            opacity: 0.8;
+            min-height: 1.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-base-300">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Logo/Brand -->
+        <div class="text-center mb-8">
+            <h1 class="gradient-text">LearnNext</h1>
+            <p class="text-base-content/60 text-lg">AI-Powered PDF Summarization</p>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="hero rounded-2xl hero-gradient mb-12">
+            <div class="hero-content flex-col lg:flex-row-reverse gap-12 py-12">
+                <div class="lg:w-1/2">
+                    <div class="relative">
+                        <!-- Decorative elements -->
+                        <div class="absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl"></div>
+                        <div class="absolute -bottom-4 -left-4 w-48 h-48 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
+                        <img src="https://imagedelivery.net/xaKlCos5cTg_1RWzIu_h-A/729a71a6-f5e1-439a-0a3c-fcddcd9b4f00/public" alt="PDF Processing Illustration" class="w-full rounded-2xl shadow-2xl relative z-10 border border-white/10" />
+                    </div>
+                </div>
+                <div class="lg:w-1/2">
+                    <h2 class="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+                        Transform the Way You Read PDFs
+                    </h2>
+                    <p class="text-lg text-base-content/80 leading-relaxed mb-8">
+                        LearnNext simplifies your PDF reading experience by providing concise summaries at your fingertips. Our cutting-edge AI tool analyzes documents with precision, allowing you to grasp key insights swiftly and efficiently, saving you invaluable time.
+                    </p>
+                    <div class="flex flex-wrap gap-4 mb-6">
+                        <div class="badge badge-primary badge-outline p-3">AI-Powered</div>
+                        <div class="badge badge-primary badge-outline p-3">Real-time Analysis</div>
+                        <div class="badge badge-primary badge-outline p-3">Time-saving</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Feature Cards -->
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            <div class="card feature-card">
+                <div class="card-body">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    <h3 class="card-title text-lg">Lightning Fast</h3>
+                    <p class="text-base-content/70">Get summaries in seconds, not minutes</p>
+                </div>
+            </div>
+            <div class="card feature-card">
+                <div class="card-body">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                    <h3 class="card-title text-lg">Secure</h3>
+                    <p class="text-base-content/70">Your documents stay private and protected</p>
+                </div>
+            </div>
+            <div class="card feature-card">
+                <div class="card-body">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                    <h3 class="card-title text-lg">Smart Analysis</h3>
+                    <p class="text-base-content/70">Advanced AI for accurate summaries</p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Main Card -->
+        <div class="card bg-base-200 shadow-xl border border-base-300">
+            <div class="card-body">
+                <!-- File Input Area -->
+                <div class="mb-8">
+                    <label class="block text-center w-full px-4 py-12 border-2 border-dashed border-opacity-50 border-primary rounded-xl hover:border-accent transition-colors cursor-pointer group relative overflow-hidden">
+                        <input type="file" id="pdfInput" accept="application/pdf" class="hidden">
+                        <div class="relative z-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-primary/60 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                            <span class="text-base-content group-hover:text-accent font-medium">
+                                Drop your PDF here or click to browse
+                            </span>
+                            <p class="text-base-content/60 text-sm mt-2">
+                                Supports PDF files up to 10MB
+                            </p>
+                        </div>
+                    </label>
+                    <div id="selectedFile" class="selected-file">
+                        <span class="text-sm">Selected file: </span>
+                        <span id="fileName" class="selected-file-name text-sm"></span>
+                    </div>
+                </div>
+
+                <!-- Enhanced Action Button  -->
+                <button id="summarizeButton" disabled 
+                    class="premium-button w-full py-4 px-8 rounded-lg text-white font-medium text-lg relative overflow-hidden flex items-center justify-center gap-2 group">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Summarize PDF</span>
+                </button>
+
+                <!-- Progress Indicator -->
+                <div id="progressBar" class="progress-bar">
+                    <div id="progressBarFill" class="progress-bar-fill"></div>
+                </div>
+                <!-- Progress Status -->
+                <div id="progress" class="progress-status"></div>
+
+                <!-- Output Area -->
+                <textarea id="summaryOutput" 
+                    class="textarea textarea-bordered w-full h-64 mt-6 bg-base-300 text-base-content font-mono text-sm resize-none focus:outline-none focus:border-accent"
+                    readonly 
+                    placeholder="Summary will appear here..."></textarea>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer footer-center p-10 mt-12 text-base-content">
+            <div class="grid grid-flow-col gap-8">
+                <a href="https://github.com/fssorcerer" class="btn btn-ghost gap-2 normal-case" target="_blank" rel="noopener noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="fill-current">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </a>
+                <a href="https://twitter.com/@_ArindamGoswami" class="btn btn-ghost gap-2 normal-case" target="_blank" rel="noopener noreferrer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="fill-current">
+                        <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                    </svg>
+                    Twitter
+                </a>
+                <div class="divider divider-horizontal"></div>
+                <p class="opacity-75">© 2025 Arindam Goswami</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>    
+</body>
+</html>
