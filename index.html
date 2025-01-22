@@ -12,24 +12,77 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
+        
+        /* Improved gradient text for better visibility */
         .gradient-text {
             background: linear-gradient(to right, #3b82f6, #8b5cf6, #ec4899);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             font-family: 'Montserrat', sans-serif;
-            font-size: 48px;
+            font-size: clamp(2rem, 5vw, 3rem); /* Responsive font size */
             font-weight: bold;
+            line-height: 1.2;
         }
         
+        /* Responsive hero section */
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            backdrop-filter: blur(10px);
+            padding: clamp(1rem, 5vw, 3rem);
+        }
+        
+        /* Improved theme toggle positioning */
+        .theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 50;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Responsive container padding */
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            
+            .hero-content {
+                padding: 1rem;
+            }
+        }
+        .feature-card {
+            background: rgba(124, 58, 237, 0.05);
+            border: 1px solid rgba(124, 58, 237, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        /* Upload Button Styles */
         .premium-button {
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
         }
 
         .premium-button:hover:not(:disabled) {
@@ -38,39 +91,20 @@
             background: linear-gradient(135deg, #4338ca, #6d28d9);
         }
 
-        .premium-button:active:not(:disabled) {
-            transform: translateY(0px);
-        }
-
         .premium-button:disabled {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
             opacity: 0.5;
             cursor: not-allowed;
         }
 
-        .hero-gradient {
-            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
-            border: 1px solid rgba(124, 58, 237, 0.2);
-            backdrop-filter: blur(10px);
-        }
-        .feature-card {
-            background: rgba(124, 58, 237, 0.05);
-            border: 1px solid rgba(124, 58, 237, 0.1);
-            backdrop-filter: blur(10px);
-        }
-        .feature-card:hover {
-            background: rgba(124, 58, 237, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.2);
-            backdrop-filter: blur(10px);
-        }
-         /* Add new styles */
-         .progress-bar {
+        /* Progress Bar */
+        .progress-bar {
             width: 100%;
             height: 4px;
             background-color: rgba(124, 58, 237, 0.1);
             border-radius: 2px;
             overflow: hidden;
             display: none;
+            margin: 1rem 0;
         }
 
         .progress-bar-fill {
@@ -80,53 +114,80 @@
             transition: width 0.3s ease;
         }
 
-        .selected-file {
-            margin-top: 8px;
-            padding: 8px 16px;
+        /* File Selection Area */
+        .file-drop-zone {
+            transition: all 0.3s ease;
+            border: 2px dashed rgba(124, 58, 237, 0.3);
+        }
+
+        .file-drop-zone.drag-over {
             background: rgba(124, 58, 237, 0.1);
-            border-radius: 8px;
-            display: none;
+            border-color: rgba(124, 58, 237, 0.8);
         }
 
-        .selected-file-name {
-            font-weight: 500;
-            color: var(--primary);
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .feature-cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .file-drop-zone {
+                padding: 1.5rem 1rem;
+            }
         }
-
         .footer {
             background: rgba(124, 58, 237, 0.05);
             border-top: 1px solid rgba(124, 58, 237, 0.1);
             backdrop-filter: blur(10px);
         }
 
-        .progress-status {
-            text-align: center;
-            margin-top: 0.5rem;
-            font-style: italic;
-            color: var(--base-content);
-            opacity: 0.8;
-            min-height: 1.5rem;
+        .social-link {
+            transition: all 0.3s ease;
         }
-        .theme-toggle {
+
+        .social-link:hover {
+            transform: translateY(-2px);
+        }
+
+        .social-link:active {
+            transform: translateY(0);
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading-pulse {
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        /* Toast Notification */
+        .toast {
             position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 50;
-            padding: 0.5rem;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 1.5rem;
             border-radius: 0.5rem;
             background: rgba(124, 58, 237, 0.1);
             border: 1px solid rgba(124, 58, 237, 0.2);
             backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            z-index: 50;
+            display: none;
         }
-        
-        .theme-toggle:hover {
-            background: rgba(124, 58, 237, 0.2);
-            transform: translateY(-1px);
-        }
-        
-        .theme-toggle:active {
-            transform: translateY(0px);
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .footer {
+                padding: 2rem 1rem;
+            }
+            
+            .toast {
+                width: calc(100% - 2rem);
+                margin: 0 1rem;
+            }
         }
 
         [data-theme='light'] .hero-gradient {
@@ -144,41 +205,39 @@
 </head>
 <body class="min-h-screen bg-base-300">
     <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
-        <!-- Sun icon (shown in dark mode) -->
         <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
         </svg>
-        <!-- Moon icon (shown in light mode) -->
         <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="black">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
         </svg>
     </button>
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- Logo/Brand -->
-        <div class="text-center mb-8">
-            <h1 class="gradient-text">LearnNext</h1>
-            <p class="text-base-content/60 text-lg">AI-Powered PDF Summarization</p>
+        <div class="text-center mb-8 pt-4">
+            <h1 class="gradient-text mb-2">LearnNext</h1>
+            <p class="text-base-content/60 text-lg md:text-xl">AI-Powered PDF Summarization</p>
         </div>
 
         <!-- Hero Section -->
         <div class="hero rounded-2xl hero-gradient mb-12">
-            <div class="hero-content flex-col lg:flex-row-reverse gap-12 py-12">
-                <div class="lg:w-1/2">
+            <div class="hero-content flex-col lg:flex-row-reverse gap-6 lg:gap-12 py-6 lg:py-12">
+                <div class="lg:w-1/2 w-full">
                     <div class="relative">
                         <!-- Decorative elements -->
-                        <div class="absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl"></div>
-                        <div class="absolute -bottom-4 -left-4 w-48 h-48 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
+                        <div class="absolute -top-4 -right-4 w-48 md:w-72 h-48 md:h-72 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl"></div>
+                        <div class="absolute -bottom-4 -left-4 w-32 md:w-48 h-32 md:h-48 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
                         <img src="https://imagedelivery.net/xaKlCos5cTg_1RWzIu_h-A/729a71a6-f5e1-439a-0a3c-fcddcd9b4f00/public" alt="PDF Processing Illustration" class="w-full rounded-2xl shadow-2xl relative z-10 border border-white/10" />
                     </div>
                 </div>
-                <div class="lg:w-1/2">
-                    <h2 class="text-4xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
+                <div class="lg:w-1/2 w-full text-center lg:text-left">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
                         Transform the Way You Read PDFs
                     </h2>
-                    <p class="text-lg text-base-content/80 leading-relaxed mb-8">
-                        LearnNext simplifies your PDF reading experience by providing concise summaries at your fingertips. Our cutting-edge AI tool analyzes documents with precision, allowing you to grasp key insights swiftly and efficiently, saving you invaluable time.
+                    <p class="text-base md:text-lg text-base-content/80 leading-relaxed mb-6 md:mb-8">
+                        LearnNext simplifies your PDF reading experience by providing concise summaries at your fingertips. Our cutting-edge AI tool analyzes documents with precision, allowing you to grasp key insights swiftly and efficiently.
                     </p>
-                    <div class="flex flex-wrap gap-4 mb-6">
+                    <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
                         <div class="badge badge-primary badge-outline p-3">AI-Powered</div>
                         <div class="badge badge-primary badge-outline p-3">Real-time Analysis</div>
                         <div class="badge badge-primary badge-outline p-3">Time-saving</div>
@@ -187,32 +246,46 @@
             </div>
         </div>
         <!-- Feature Cards -->
-        <div class="grid md:grid-cols-3 gap-6 mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12">
             <div class="card feature-card">
-                <div class="card-body">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                    <h3 class="card-title text-lg">Lightning Fast</h3>
-                    <p class="text-base-content/70">Get summaries in seconds, not minutes</p>
+                <div class="card-body p-6">
+                    <div class="flex items-center space-x-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        <div>
+                            <h3 class="card-title text-lg mb-2">Lightning Fast</h3>
+                            <p class="text-base-content/70 text-sm">Get summaries in seconds, not minutes. Perfect for quick insights.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+            
             <div class="card feature-card">
-                <div class="card-body">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                    </svg>
-                    <h3 class="card-title text-lg">Secure</h3>
-                    <p class="text-base-content/70">Your documents stay private and protected</p>
+                <div class="card-body p-6">
+                    <div class="flex items-center space-x-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                        <div>
+                            <h3 class="card-title text-lg mb-2">Secure</h3>
+                            <p class="text-base-content/70 text-sm">Your documents stay private and protected at all times.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+            
             <div class="card feature-card">
-                <div class="card-body">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                    </svg>
-                    <h3 class="card-title text-lg">Smart Analysis</h3>
-                    <p class="text-base-content/70">Advanced AI for accurate summaries</p>
+                <div class="card-body p-6">
+                    <div class="flex items-center space-x-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                        <div>
+                            <h3 class="card-title text-lg mb-2">Smart Analysis</h3>
+                            <p class="text-base-content/70 text-sm">Advanced AI ensures accurate and relevant summaries.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -220,70 +293,102 @@
 
         <!-- Main Card -->
         <div class="card bg-base-200 shadow-xl border border-base-300">
-            <div class="card-body">
-                <!-- File Input Area -->
+            <div class="card-body p-6 md:p-8">
+                <!-- File Drop Zone -->
                 <div class="mb-8">
-                    <label class="block text-center w-full px-4 py-12 border-2 border-dashed border-opacity-50 border-primary rounded-xl hover:border-accent transition-colors cursor-pointer group relative overflow-hidden">
+                    <label class="file-drop-zone block text-center w-full px-4 py-8 md:py-12 rounded-xl hover:bg-opacity-10 hover:border-accent cursor-pointer">
                         <input type="file" id="pdfInput" accept="application/pdf" class="hidden">
-                        <div class="relative z-10">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-primary/60 group-hover:text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div class="space-y-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-primary/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                             </svg>
-                            <span class="text-base-content group-hover:text-accent font-medium">
-                                Drop your PDF here or click to browse
-                            </span>
-                            <p class="text-base-content/60 text-sm mt-2">
-                                Supports PDF files up to 10MB
-                            </p>
+                            <div>
+                                <p class="text-base-content font-medium mb-2">
+                                    Drop your PDF here or click to browse
+                                </p>
+                                <p class="text-base-content/60 text-sm">
+                                    Supports PDF files up to 10MB
+                                </p>
+                            </div>
                         </div>
                     </label>
-                    <div id="selectedFile" class="selected-file">
-                        <span class="text-sm">Selected file: </span>
-                        <span id="fileName" class="selected-file-name text-sm"></span>
+                    <div id="selectedFile" class="hidden mt-4 p-4 bg-base-300 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <span id="fileName" class="text-sm font-medium"></span>
+                            </div>
+                            <button id="removeFile" class="text-base-content/60 hover:text-base-content">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Enhanced Action Button  -->
-                <button id="summarizeButton" disabled 
-                    class="premium-button w-full py-4 px-8 rounded-lg text-white font-medium text-lg relative overflow-hidden flex items-center justify-center gap-2 group">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span>Summarize PDF</span>
-                </button>
-
-                <!-- Progress Indicator -->
-                <div id="progressBar" class="progress-bar">
-                    <div id="progressBarFill" class="progress-bar-fill"></div>
+               <div class="space-y-4">
+                    <button id="summarizeButton" disabled class="premium-button w-full py-4 px-8 rounded-lg text-white font-medium text-lg flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Summarize PDF</span>
+                    </button>
+                    
+                    <div id="progressBar" class="progress-bar">
+                        <div id="progressBarFill" class="progress-bar-fill"></div>
+                    </div>
+                    
+                    <div id="progress" class="text-center text-sm text-base-content/70 italic min-h-[1.5rem]"></div>
                 </div>
-                <!-- Progress Status -->
-                <div id="progress" class="progress-status"></div>
 
                 <!-- Output Area -->
                 <textarea id="summaryOutput" 
-                    class="textarea textarea-bordered w-full h-64 mt-6 bg-base-300 text-base-content font-mono text-sm resize-none focus:outline-none focus:border-accent"
+                    class="textarea textarea-bordered w-full h-64 mt-6 bg-base-300 text-base-content font-mono text-sm resize-none focus:outline-none focus:border-accent p-4"
                     readonly 
-                    placeholder="Summary will appear here..."></textarea>
+                    placeholder="Your summary will appear here..."></textarea>
             </div>
         </div>
-
+        <div id="toast" class="toast">
+            <div class="flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span id="toastMessage" class="text-sm font-medium"></span>
+            </div>
+        </div>
         <!-- Footer -->
-        <footer class="footer footer-center p-4 sm:p-6 md:p-10 mt-12 text-base-content">
-            <div class="flex flex-col sm:grid sm:grid-flow-col gap-4 sm:gap-8 items-center">
-                <a href="https://github.com/fssorcerer" class="btn btn-ghost gap-2 normal-case" target="_blank" rel="noopener noreferrer">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="fill-current">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                    </svg>
-                    GitHub
-                </a>
-                <a href="https://twitter.com/@_ArindamGoswami" class="btn btn-ghost gap-2 normal-case" target="_blank" rel="noopener noreferrer">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="fill-current">
-                        <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                    </svg>
-                    Twitter
-                </a>
-                <div class="hidden sm:block divider divider-horizontal"></div>
-                <p class="opacity-75">© 2025 Arindam Goswami</p>
+        <footer class="footer footer-center p-6 md:p-10 mt-12 text-base-content">
+            <div class="max-w-6xl w-full">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center justify-items-center">
+                    <!-- Social Links -->
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a href="https://github.com/fssorcerer" 
+                           class="social-link btn btn-ghost gap-2 normal-case" 
+                           target="_blank" 
+                           rel="noopener noreferrer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="fill-current">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                            GitHub
+                        </a>
+                        <a href="https://twitter.com/@_ArindamGoswami" 
+                           class="social-link btn btn-ghost gap-2 normal-case" 
+                           target="_blank" 
+                           rel="noopener noreferrer">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="fill-current">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                            Twitter
+                        </a>
+                    </div>
+                    <div class="text-center">
+                        <p class="opacity-75">© 2025 Arindam Goswami</p>
+                    </div>
+                </div>
             </div>
         </footer>
     </div>
